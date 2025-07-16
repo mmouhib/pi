@@ -4,6 +4,17 @@
 
 ---
 
+## Default Credentials
+
+- **Grafana**
+  - **User:** `admin`
+  - **Password:** `admin@123`
+- **Nexus**
+  - **User:** `admin`
+  - **Password:** `admin`
+
+---
+
 ## Requirements
 
 - WSL or any Linux machine
