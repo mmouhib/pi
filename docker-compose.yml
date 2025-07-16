@@ -9,6 +9,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./jenkins/plugins.txt:/usr/share/jenkins/ref/plugins.txt
+      - ./jenkins_home:/var/jenkins_home
     environment:
       - JAVA_OPTS=-Djenkins.install.runSetupWizard=false
       - JENKINS_ADMIN_ID=${JENKINS_ADMIN_ID}
@@ -36,22 +37,6 @@ services:
     networks:
       - devops
 
-  edit-sonarqube-password:
-    image: alpine:latest
-    container_name: edit-sonarqube-password
-    depends_on:
-      - sonarqube
-    entrypoint: >
-      /bin/sh -c "
-        apk add --no-cache curl && 
-        until curl -s http://sonarqube:9000/api/system/health; do
-          echo 'Waiting for SonarQube to be ready...';
-          sleep 5;
-        done && 
-        curl -u admin:admin -X POST 'http://sonarqube:9000/api/users/change_password?login=admin&previousPassword=admin&password=+ANJ#KKrtN4S$n_'"
-    networks:
-      - devops
-    restart: "no"
   ########################
   # Nexus (Artifact Repository)
   ########################
@@ -94,65 +79,11 @@ services:
     environment:
       - GF_SECURITY_ADMIN_USER=${GRAFANA_USER}
       - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASS}
-      # Keycloak OAuth Configuration
-      - GF_AUTH_GENERIC_OAUTH_VERBOSE_LOGGING=true
-      - GF_AUTH_GENERIC_OAUTH_ENABLED=true
-      - GF_AUTH_GENERIC_OAUTH_NAME=Keycloak
-      - GF_AUTH_GENERIC_OAUTH_ALLOW_SIGN_UP=true
-      - GF_AUTH_GENERIC_OAUTH_CLIENT_ID=grafana
-      - GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET=${KEYCLOAK_GRAFANA_CLIENT_SECRET:-grafana-secret}
-      - GF_AUTH_GENERIC_OAUTH_SCOPES=openid email profile
-      - GF_AUTH_GENERIC_OAUTH_AUTH_URL=http://localhost:${KEYCLOAK_PORT:-8090}/realms/devops/protocol/openid-connect/auth
-      - GF_AUTH_GENERIC_OAUTH_TOKEN_URL=http://keycloak:8080/realms/devops/protocol/openid-connect/token
-      - GF_AUTH_GENERIC_OAUTH_API_URL=http://keycloak:8080/realms/devops/protocol/openid-connect/userinfo
-      - GF_AUTH_GENERIC_OAUTH_ROLE_ATTRIBUTE_PATH=contains(realm_access.roles[*], 'admin') && 'Admin' || contains(realm_access.roles[*], 'editor') && 'Editor' || 'Viewer'
-      - GF_AUTH_GENERIC_OAUTH_LOGIN_ATTRIBUTE_PATH=preferred_username
-      - GF_AUTH_GENERIC_OAUTH_NAME_ATTRIBUTE_PATH=name
-      - GF_AUTH_GENERIC_OAUTH_EMAIL_ATTRIBUTE_PATH=email
-      - GF_AUTH_GENERIC_OAUTH_USE_PKCE=false
-      - GF_AUTH_GENERIC_OAUTH_TLS_SKIP_VERIFY_INSECURE=true
     volumes:
       - grafana-storage:/var/lib/grafana
       - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
       - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
       - grafana-dashboards:/var/lib/grafana/dashboards
-    depends_on:
-      - fetch_dashboards
-      - keycloak
-    networks:
-      - devops
-
-  ########################
-  # Keycloak (Authentication & Authorization - H2 Database)
-  ########################
-  keycloak:
-    image: quay.io/keycloak/keycloak:23.0.0
-    container_name: keycloak
-    command: start-dev
-    ports:
-      - "${KEYCLOAK_PORT:-8090}:8080"
-    environment:
-      - KEYCLOAK_ADMIN=${KEYCLOAK_ADMIN_USER:-admin}
-      - KEYCLOAK_ADMIN_PASSWORD=${KEYCLOAK_ADMIN_PASSWORD:-admin123}
-      - KC_HOSTNAME_STRICT=false
-      - KC_HOSTNAME_STRICT_HTTPS=false
-      - KC_HTTP_ENABLED=true
-      - KC_HEALTH_ENABLED=true
-    volumes:
-      - keycloak-data:/opt/keycloak/data
-    networks:
-      - devops
-
-  ########################
-  # Dashboard Init (Alpine container)
-  ########################
-  fetch_dashboards:
-    image: alpine:latest
-    container_name: fetch_dashboards
-    entrypoint: ["/bin/sh", "/fetch_dashboards.sh"]
-    volumes:
-      - grafana-dashboards:/dashboards
-      - ./grafana/init/fetch_dashboards.sh:/fetch_dashboards.sh
     networks:
       - devops
 
@@ -183,10 +114,10 @@ services:
       - devops
 
   # ########################
-  # # Spring Boot App (built by Jenkins, pulled from Nexus)
+  # # Spring Boot App (built by Jenkins, pulled from Docker Hub)
   # ########################
   backend-app:
-    image: ${NEXUS_DOCKER_URL:-nexus:8081}/kaddem:${APP_VERSION:-latest}
+    image: kaddem:${APP_VERSION:-latest}
     container_name: backend-app
     ports:
       - "8088:8080"
