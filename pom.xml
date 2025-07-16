@@ -15,8 +15,8 @@
     <description>kaddem</description>
     <properties>
         <java.version>1.8</java.version>
-        <sonar.host.url>http://sonarqube:9000</sonar.host.url>
-        <sonar.token>sqa_c662be938d718b8608cb6b76e4a1c8a4a891d92a</sonar.token>
+        <sonar.host.url>http://localhost:9000</sonar.host.url>
+        <sonar.token>squ_54276d8cc5df1637767a3a8999abe64b8b2d0877</sonar.token>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <jacoco.version>0.8.8</jacoco.version>
