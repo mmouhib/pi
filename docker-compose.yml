@@ -20,9 +20,6 @@ services:
     networks:
       - devops
 
-  ########################
-  # SonarQube
-  ########################
   sonarqube:
     image: sonarqube:community
     container_name: sonarqube
@@ -37,9 +34,6 @@ services:
     networks:
       - devops
 
-  ########################
-  # Nexus (Artifact Repository)
-  ########################
   nexus:
     image: sonatype/nexus3
     container_name: nexus
@@ -55,9 +49,6 @@ services:
     networks:
       - devops
 
-  ########################
-  # Prometheus
-  ########################
   prometheus:
     image: prom/prometheus
     container_name: prometheus
@@ -68,9 +59,6 @@ services:
     networks:
       - devops
 
-  ########################
-  # Grafana (with Keycloak OAuth)
-  ########################
   grafana:
     image: grafana/grafana
     container_name: grafana
@@ -87,20 +75,6 @@ services:
     networks:
       - devops
 
-  ########################
-  # Node Exporter (System Metrics)
-  ########################
-  node-exporter:
-    image: prom/node-exporter
-    container_name: node-exporter
-    ports:
-      - "9100:9100"
-    networks:
-      - devops
-
-  ########################
-  # MySQL Database
-  ########################
   mysql:
     image: mysql:8.0
     container_name: mysql
@@ -113,9 +87,6 @@ services:
     networks:
       - devops
 
-  # ########################
-  # # Spring Boot App (built by Jenkins, pulled from Docker Hub)
-  # ########################
   backend-app:
     image: docker.io/mmouhib/kaddem:${APP_VERSION:-latest}
     container_name: backend-app
@@ -146,7 +117,6 @@ volumes:
   sonarqube_extensions:
   sonarqube_logs:
   mysql-data:
-  keycloak-data:
 
 networks:
   devops:
