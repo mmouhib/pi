@@ -1,0 +1,37 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'jenkins'
+    metrics_path: '/prometheus'
+    tls_config:
+      insecure_skip_verify: true
+    static_configs:
+      - targets: ['jenkins:8080']
+    basic_auth:
+      username: 'admin'         
+      password: '8702c4900e8a4b2e9fb3c6e08e89e8c7'
+  - job_name: 'sonarqube'
+    metrics_path: '/api/monitoring/metrics'
+    static_configs:
+      - targets: ['sonarqube:9000']
+    basic_auth:
+      username: 'admin'
+      password: '+ANJ#KKrtN4S$n_'
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+  - job_name: 'spring-boot'
+    metrics_path: '/kaddem/actuator/prometheus'
+    static_configs:
+      - targets: ['backend-app:8089']
+  - job_name: "nexus"
+    metrics_path: '/service/metrics/prometheus'
+    static_configs:
+      - targets: ["nexus:8081"]
+    basic_auth:
+      username: "admin"
+      password: "admin"
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['node-exporter:9100']

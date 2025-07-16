@@ -1,0 +1,101 @@
+jenkins:
+  systemMessage: "Jenkins configured automatically with JCasC"
+  numExecutors: 2
+  scmCheckoutRetryCount: 3
+  mode: NORMAL
+  
+  authorizationStrategy:
+    loggedInUsersCanDoAnything:
+      allowAnonymousRead: false
+      
+  securityRealm:
+    local:
+      allowsSignup: false
+      users:
+        - id: "${JENKINS_ADMIN_ID}"
+          password: "${JENKINS_ADMIN_PASSWORD}"
+
+location:
+  url: http://localhost:8080/
+
+credentials:
+  system:
+    domainCredentials:
+      - credentials:
+          - usernamePassword:
+              scope: GLOBAL
+              id: "nexus-credentials"
+              username: "admin"
+              password: "admin"
+              description: "Nexus credentials"
+          - usernamePassword:
+              scope: GLOBAL
+              id: "sonar-credentials"
+              username: "admin"
+              password: "+ANJ#KKrtN4S$n_"
+              description: "SonarQube credentials"
+              
+tool:
+  jdk:
+    installations:
+      - name: "JDK8"
+        properties:
+          - installSource:
+              installers:
+                - jdkInstaller:
+                    acceptLicense: true
+                    id: "jdk-8u391-oth-JPR"
+  maven:
+    installations:
+      - name: "Maven"
+        properties:
+          - installSource:
+              installers:
+                - maven:
+                    id: "3.9.6"
+
+sonarGlobalConfiguration:
+  buildWrapperEnabled: true
+  installations:
+    - name: "SonarQube"
+      serverUrl: "http://sonarqube:9000"
+      credentialsId: "sonar-credentials"
+      webhookSecretId: ""
+      mojoVersion: ""
+
+jobs:
+  - script: >
+      folder('DevOps') {
+        description('DevOps CI/CD Pipelines')
+      }
+      pipelineJob('DevOps/DeployKaddem') {
+        description('Pipeline for building, testing, and deploying the Kaddem Spring Boot application')
+        definition {
+          cpsScm {
+            scm {
+              git {
+                remote {
+                  url('file:///home/yhabibi/esprit')
+                }
+                branch('*/main')
+              }
+            }
+            scriptPath('Jenkinsfile')
+          }
+        }
+        triggers {
+          scm('H/15 * * * *')
+        }
+      }
+      pipelineJob('LocalBuildAndDeploy') {
+        description('Pipeline for building, testing, and deploying the local Java application')
+        definition {
+          cps {
+            script(readFileFromWorkspace('Jenkinsfile'))
+            sandbox()
+          }
+        }
+        triggers {
+          cron('H/15 * * * *')
+        }
+      }
