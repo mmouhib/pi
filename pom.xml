@@ -16,7 +16,7 @@
     <properties>
         <java.version>1.8</java.version>
         <sonar.host.url>http://sonarqube:9000</sonar.host.url>
-        <sonar.token>sqa_8f97cadf7442b4fe75b4e0218a2e7af42547b9ea</sonar.token>
+        <sonar.token>sqa_c662be938d718b8608cb6b76e4a1c8a4a891d92a</sonar.token>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <jacoco.version>0.8.8</jacoco.version>
