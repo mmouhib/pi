@@ -6,7 +6,7 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>2.7.5</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <relativePath/>
     </parent>
     <groupId>tn.esprit.spring</groupId>
     <artifactId>kaddem</artifactId>
@@ -16,9 +16,7 @@
     <properties>
         <java.version>1.8</java.version>
         <sonar.host.url>http://sonarqube:9000</sonar.host.url>
-        <sonar.token>sqa_3dffd8c9594d53939907e2ad3c9b5a308d93280d</sonar.token>
-        <!-- <sonar.login>admin</sonar.login>
-        <sonar.password>+ANJ#KKrtN4S$n_</sonar.password> -->
+        <sonar.token>sqa_8f97cadf7442b4fe75b4e0218a2e7af42547b9ea</sonar.token>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <jacoco.version>0.8.8</jacoco.version>
