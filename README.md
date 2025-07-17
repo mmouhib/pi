@@ -47,7 +47,15 @@
 
 ---
 
-## 2. Change Nexus Password
+## 2. Run the Project
+
+```sh
+docker compose up jenkins sonarqube nexus grafana prometheus -d
+```
+
+---
+
+## 3. Change Nexus Password
 
 1. Open a terminal and access the Nexus container:
    ```sh
@@ -57,20 +65,11 @@
    ```sh
    cat /nexus-data/admin.password | grep ""
    ```
-   
 3. Open Nexus at [http://localhost:8081](http://localhost:8081) and log in:
    - **User:** `admin`
    - **Password:** `{the password you found}`
 4. Change the password to `admin` for easier access.
-    ![Show Nexus Password](docs/imgnexuspass.png)
-
----
-
-## 3. Run the Project
-
-```sh
-docker compose up jenkins sonarqube nexus grafana prometheus -d
-```
+   ![Show Nexus Password](docs/imgnexuspass.png)
 
 ---
 
