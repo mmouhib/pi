@@ -11,7 +11,7 @@
   - **Password:** `admin@123`
 - **Nexus**
   - **User:** `admin`
-  - **Password:** `admin`
+  - **Password:** {refer to step}
 
 ---
 
@@ -47,7 +47,26 @@
 
 ---
 
-## 2. Run the Project
+## 2. Change Nexus Password
+
+1. Open a terminal and access the Nexus container:
+   ```sh
+   docker exec -it nexus bash
+   ```
+2. Display the initial admin password:
+   ```sh
+   cat /nexus-data/admin.password | grep ""
+   ```
+   
+3. Open Nexus at [http://localhost:8081](http://localhost:8081) and log in:
+   - **User:** `admin`
+   - **Password:** `{the password you found}`
+4. Change the password to `admin` for easier access.
+    ![Show Nexus Password](docs/imgnexuspass.png)
+
+---
+
+## 3. Run the Project
 
 ```sh
 docker compose up jenkins sonarqube nexus grafana prometheus -d
@@ -55,7 +74,7 @@ docker compose up jenkins sonarqube nexus grafana prometheus -d
 
 ---
 
-## 3. Add Docker Hub Credentials in Jenkins
+## 4. Add Docker Hub Credentials in Jenkins
 
 - Go to: [Jenkins Credentials](http://localhost:8080/manage/credentials/store/system/domain/_/)
 - Generate a token from [Docker Hub Security Settings](https://hub.docker.com/settings/security) ⇒ *Personal access token*
@@ -68,7 +87,7 @@ docker compose up jenkins sonarqube nexus grafana prometheus -d
 
 ---
 
-## 4. Add SonarQube Credentials in Jenkins
+## 5. Add SonarQube Credentials in Jenkins
 
 - Go to: [Jenkins Credentials](http://localhost:8080/manage/credentials/store/system/domain/_/)
 - Use the following:
@@ -78,7 +97,7 @@ docker compose up jenkins sonarqube nexus grafana prometheus -d
 
 ---
 
-## 5. Generate a SonarQube Token
+## 6. Generate a SonarQube Token
 
 - Log in to SonarQube (port 9000).
 - On first login, change the password:
@@ -90,7 +109,7 @@ docker compose up jenkins sonarqube nexus grafana prometheus -d
 
 ---
 
-## 6. Add JDK Dependency in Jenkins
+## 7. Add JDK Dependency in Jenkins
 
 - Go to: [Jenkins Global Tool Configuration](http://localhost:8080/manage/configureTools/)
 - Add JDK (e.g., JDK 8 and JDK 17)
@@ -99,7 +118,7 @@ docker compose up jenkins sonarqube nexus grafana prometheus -d
 
 ---
 
-## 7. Add Maven Dependency in Jenkins
+## 8. Add Maven Dependency in Jenkins
 
 - Go to: [Jenkins Global Tool Configuration](http://localhost:8080/manage/configureTools/)
 - Add Maven
@@ -108,7 +127,7 @@ docker compose up jenkins sonarqube nexus grafana prometheus -d
 
 ---
 
-## 8. Update Docker Compose for Backend App
+## 9. Update Docker Compose for Backend App
 
 - In `docker-compose.yml`, change the image tag for the `backend-app` service:
   - Replace `mmouhib` with your Docker Hub username.
@@ -116,7 +135,7 @@ docker compose up jenkins sonarqube nexus grafana prometheus -d
 
 ---
 
-## 9. Add SonarQube URL in Jenkins
+## 10. Add SonarQube URL in Jenkins
 
 - Go to: [Jenkins Configure System](http://localhost:8080/manage/configure)
 - Add the SonarQube URL.
@@ -125,7 +144,7 @@ docker compose up jenkins sonarqube nexus grafana prometheus -d
 
 ---
 
-## 10. Create a Jenkins Pipeline and Add the Jenkinsfile
+## 11. Create a Jenkins Pipeline and Add the Jenkinsfile
 
 1. In Jenkins, click **"New Item"**.
 2. Enter a name for your pipeline and select **"Pipeline"**.
@@ -137,7 +156,7 @@ docker compose up jenkins sonarqube nexus grafana prometheus -d
 
 ---
 
-## 11. Run the Jenkins Pipeline
+## 12. Run the Jenkins Pipeline
 
 - Go to your pipeline in Jenkins.
 - Click **"Build Now"**.
@@ -146,7 +165,7 @@ docker compose up jenkins sonarqube nexus grafana prometheus -d
 
 ---
 
-## 12. Import Grafana Dashboards
+## 13. Import Grafana Dashboards
 
 After the pipeline succeeds:
 
