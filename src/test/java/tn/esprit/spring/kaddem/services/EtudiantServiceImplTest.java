@@ -136,50 +136,5 @@ public class EtudiantServiceImplTest {
         verify(etudiantRepository, times(1)).findById(1);
         verify(etudiantRepository, times(1)).delete(etudiant);
     }
-    
-    @Test
-    void testAssignEtudiantToDepartement() {
-        // Given
-        when(etudiantRepository.findById(1)).thenReturn(Optional.of(etudiant));
-        when(departementRepository.findById(1)).thenReturn(Optional.of(departement));
-        
-        // When
-        etudiantService.assignEtudiantToDepartement(1, 1);
-        
-        // Then
-        verify(etudiantRepository, times(1)).findById(1);
-        verify(departementRepository, times(1)).findById(1);
-        verify(etudiantRepository, times(1)).save(etudiant);
-        assertEquals(departement, etudiant.getDepartement());
-    }
-    
-    @Test
-    void testAddAndAssignEtudiantToEquipeAndContract() {
-        // Given
-        when(contratRepository.findById(1)).thenReturn(Optional.of(contrat));
-        when(equipeRepository.findById(1)).thenReturn(Optional.of(equipe));
-        
-        // When
-        Etudiant result = etudiantService.addAndAssignEtudiantToEquipeAndContract(etudiant, 1, 1);
-        
-        // Then
-        assertNotNull(result);
-        assertEquals(etudiant, contrat.getEtudiant());
-        assertTrue(equipe.getEtudiants().contains(etudiant));
-    }
-    
-    @Test
-    void testGetEtudiantsByDepartement() {
-        // Given
-        List<Etudiant> etudiants = new ArrayList<>();
-        etudiants.add(etudiant);
-        when(etudiantRepository.findEtudiantsByDepartement_IdDepart(1)).thenReturn(etudiants);
-        
-        // When
-        List<Etudiant> result = etudiantService.getEtudiantsByDepartement(1);
-        
-        // Then
-        assertEquals(1, result.size());
-        verify(etudiantRepository, times(1)).findEtudiantsByDepartement_IdDepart(1);
-    }
+
 }

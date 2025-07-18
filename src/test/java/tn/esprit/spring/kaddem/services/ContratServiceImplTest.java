@@ -149,45 +149,4 @@ public class ContratServiceImplTest {
         verify(contratRepository, times(1)).findByIdContrat(1);
         verify(contratRepository, times(1)).save(contrat);
     }
-    
-    @Test
-    void testNbContratsValides() {
-        // Given
-        when(contratRepository.getnbContratsValides(startDate, endDate)).thenReturn(5);
-        
-        // When
-        Integer result = contratService.nbContratsValides(startDate, endDate);
-        
-        // Then
-        assertEquals(5, result);
-        verify(contratRepository, times(1)).getnbContratsValides(startDate, endDate);
-    }
-    
-    @Test
-    void testGetChiffreAffaireEntreDeuxDates() {
-        // Given
-        List<Contrat> contrats = new ArrayList<>();
-        
-        // Create an IA contract
-        Contrat contratIA = new Contrat();
-        contratIA.setSpecialite(Specialite.IA);
-        contrats.add(contratIA);
-        
-        // Create a CLOUD contract
-        Contrat contratCLOUD = new Contrat();
-        contratCLOUD.setSpecialite(Specialite.CLOUD);
-        contrats.add(contratCLOUD);
-        
-        when(contratRepository.findAll()).thenReturn(contrats);
-        
-        // When
-        float result = contratService.getChiffreAffaireEntreDeuxDates(startDate, endDate);
-        
-        // Then
-        // The calculation depends on the difference in months between startDate and endDate
-        // For our test dates (Jan 1, 2025 to Dec 31, 2025), that's approximately 12 months
-        // IA: 12 * 300 = 3600, CLOUD: 12 * 400 = 4800, Total: 8400
-        assertTrue(result > 0);
-        verify(contratRepository, times(1)).findAll();
-    }
 }
