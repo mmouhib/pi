@@ -115,9 +115,11 @@ pipeline {
         stage('dockerhub') {
             steps {
                 script {
-                    withCredentials([usernamePassword(credentialsId: "${NEXUS_DOCKER_CREDENTIAL_ID}",
+                    withCredentials([usernamePassword(
+                        credentialsId: "${NEXUS_DOCKER_CREDENTIAL_ID}",
                         usernameVariable: 'NEXUS_USERNAME',
-                        passwordVariable: 'NEXUS_PASSWORD')]) {
+                        passwordVariable: 'NEXUS_PASSWORD'
+                    )]) {
                         sh """
                             echo \$NEXUS_PASSWORD | docker login -u \$NEXUS_USERNAME --password-stdin
                             docker tag ${DOCKER_IMAGE_NAME}:latest \$NEXUS_USERNAME/${DOCKER_IMAGE_NAME}:latest
@@ -132,13 +134,37 @@ pipeline {
         stage('startup') {
             steps {
                 script {
-                    withCredentials([usernamePassword(credentialsId: "${NEXUS_DOCKER_CREDENTIAL_ID}",
+                    withCredentials([usernamePassword(
+                        credentialsId: "${NEXUS_DOCKER_CREDENTIAL_ID}",
                         usernameVariable: 'NEXUS_USERNAME',
-                        passwordVariable: 'NEXUS_PASSWORD')]) {
+                        passwordVariable: 'NEXUS_PASSWORD'
+                    )]) {
                         dir("${WORKSPACE}") {
                             sh """
                                 docker compose -f docker-compose.yml -p pi up mysql backend-app -d
                             """
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('k8s-deploy') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(
+                        credentialsId: "${NEXUS_DOCKER_CREDENTIAL_ID}",
+                        usernameVariable: 'NEXUS_USERNAME',
+                        passwordVariable: 'NEXUS_PASSWORD'
+                    )]) {
+                        dir("${WORKSPACE}") {
+                            catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                                sh '''
+                                    kubectl create namespace pi || true
+                                    kubectl apply -f ./k8s/mysql.yaml -n pi || true
+                                    kubectl apply -f ./k8s/backend.yaml -n pi || true
+                                '''
+                            }
                         }
                     }
                 }
